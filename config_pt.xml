@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>psmodendereco</name>
+    <displayName><![CDATA[Endere&ccedil;o por Cep]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Recupera o endere&ccedil;o por Cep da API dos correios.]]></description>
+    <author><![CDATA[Ederson Ferreira]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+	<confirmUninstall><![CDATA[Tem certeza de que deseja desinstalar este módulo]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
