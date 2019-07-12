@@ -23,6 +23,22 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
+
+// Setar esse formato ao instalar o módulo
+// ps_address_format
+// id_contry=58
+
+// firstname lastname
+// company
+// postcode
+// address1
+// vat_number
+// address2
+// other
+// city
+// State:name
+// phone
+
 $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'psmodendereco` (
