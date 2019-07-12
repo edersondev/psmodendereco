@@ -40,11 +40,10 @@
 // phone
 
 $sql = array();
-
-$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'psmodendereco` (
-    `id_psmodendereco` int(11) NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY  (`id_psmodendereco`)
-) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+$db_prefix = _DB_PREFIX_;
+$db_engine = _MYSQL_ENGINE_;
+$format = 'firstname lastname\ncompany\npostcode\naddress1\nvat_number\naddress2\nother\ncity\nState:name\nphone';
+$sql[] = "UPDATE `{$db_prefix}_address_format` SET `format`='{$format}' WHERE `id_country`=58";
 
 foreach ($sql as $query) {
     if (Db::getInstance()->execute($query) == false) {

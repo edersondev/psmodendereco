@@ -66,6 +66,8 @@ class Psmodendereco extends Module
     {
         Configuration::updateValue('PSMODENDERECO_LIVE_MODE', false);
 
+        include(dirname(__FILE__).'/sql/install.php');
+
         return parent::install() &&
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('actionValidateCustomerAddressForm') &&
