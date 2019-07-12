@@ -49,8 +49,9 @@ $(function(){
           element.removeAttr('readonly');
           elementFormGroup.find('div.form-control-comment').empty();
         },
-        success: function(){
+        success: function(json){
           elementFormGroup.addClass('has-success');
+          populateFields(json.dadosEndereco)
         },
         error: function(jqXHR,textStatus,errorThrown){
           var message = `
@@ -86,4 +87,11 @@ function resetStatusField()
 	elementFormGroup.removeClass('has-error');
 	elementFormGroup.removeClass('has-success');
 	elementFormGroup.find('div.help-block').remove();
+}
+
+function populateFields(objJson) {
+  $('input[name="address1"]').val(objJson.logradouro);
+  $('input[name="address2"]').val(objJson.bairro);
+  $('input[name="city"]').val(objJson.localidade);
+  $('select[name="id_state"]').val(objJson.id_state);
 }

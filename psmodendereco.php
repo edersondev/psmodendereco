@@ -32,6 +32,9 @@ class Psmodendereco extends Module
 {
     protected $config_form = false;
 
+    public $modPostcode;
+    public $modDataAddress;
+
     public function __construct()
     {
         $this->name = 'psmodendereco';
@@ -233,9 +236,35 @@ class Psmodendereco extends Module
 
     public function getEndereco($postcode)
     {
-        if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $postcode)) {
+        $this->modPostcode = preg_replace("/[^0-9]/", "", $postcode);
+        if (!preg_match('/^[0-9]{8}?$/', $this->modPostcode)) {
             throw new Exception('Cep inválido');
         }
-        return ['teste'];
+        $this->wsViaCep();
+        $this->getIdState();
+        return $this->modDataAddress;
+    }
+
+    private function wsViaCep()
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $url = "http://viacep.com.br/ws/{$this->modPostcode}/json";
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSLVERSION,3); 
+        $results_string = curl_exec($ch);
+        curl_close($ch);
+        $this->modDataAddress = json_decode($results_string, true);
+    }
+
+    private function getIdState()
+    {
+        $db_prefix = _DB_PREFIX_;
+        $db = Db::getInstance();
+        $isoCode = $this->modDataAddress['uf'];
+        $sql = "SELECT id_state FROM `{$db_prefix}state` WHERE `iso_code` = '{$isoCode}'";
+        $result = $db->getRow($sql);
+        $this->modDataAddress['id_state'] = $result['id_state'];
     }
 }
