@@ -69,7 +69,7 @@ class Psmodendereco extends Module
         include(dirname(__FILE__).'/sql/install.php');
 
         return parent::install() &&
-            $this->registerHook('backOfficeHeader') &&
+            $this->registerHook('actionAdminControllerSetMedia') &&
             $this->registerHook('actionValidateCustomerAddressForm') &&
             $this->registerHook('actionFrontControllerSetMedia');
     }
@@ -136,7 +136,7 @@ class Psmodendereco extends Module
         return array(
             'form' => array(
                 'legend' => array(
-                'title' => $this->l('Settings'),
+                'title' => $this->l('Configurações'),
                 'icon' => 'icon-cogs',
                 ),
                 'input' => array(
@@ -160,17 +160,24 @@ class Psmodendereco extends Module
                         ),
                     ),
                     array(
-                        'col' => 3,
-                        'type' => 'text',
-                        'prefix' => '<i class="icon icon-envelope"></i>',
-                        'desc' => $this->l('Enter a valid email address'),
-                        'name' => 'PSMODENDERECO_ACCOUNT_EMAIL',
-                        'label' => $this->l('Email'),
-                    ),
-                    array(
-                        'type' => 'password',
-                        'name' => 'PSMODENDERECO_ACCOUNT_PASSWORD',
-                        'label' => $this->l('Password'),
+                        'type' => 'radio',
+                        'label' => $this->l('WebService para buscar o endereço'),
+                        'name' => 'PSMODENDERECO_WEB_SERVICE',
+                        'class' => 't',
+                        'required'  => true,
+                        'is_bool' => true, 
+                        'values' => array(
+                            array(
+                                'id' => 'viacep',
+                                'value' => 'viacep',
+                                'label' => $this->l('ViaCep')
+                            ),
+                            array(
+                                'id' => 'wscorreios',
+                                'value' => 'wscorreios',
+                                'label' => $this->l('WsCorreios')
+                            )
+                        ),
                     ),
                 ),
                 'submit' => array(
@@ -187,8 +194,7 @@ class Psmodendereco extends Module
     {
         return array(
             'PSMODENDERECO_LIVE_MODE' => Configuration::get('PSMODENDERECO_LIVE_MODE', true),
-            'PSMODENDERECO_ACCOUNT_EMAIL' => Configuration::get('PSMODENDERECO_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'PSMODENDERECO_ACCOUNT_PASSWORD' => Configuration::get('PSMODENDERECO_ACCOUNT_PASSWORD', null),
+            'PSMODENDERECO_WEB_SERVICE' => Configuration::get('PSMODENDERECO_WEB_SERVICE','viacep')
         );
     }
 
@@ -207,11 +213,11 @@ class Psmodendereco extends Module
     /**
     * Add the CSS & JavaScript files you want to be loaded in the BO.
     */
-    public function hookBackOfficeHeader()
+    public function hookActionAdminControllerSetMedia()
     {
-        if (Tools::getValue('module_name') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        if (Tools::getValue('controller') == 'AdminAddresses') {
+            $this->context->controller->addJS($this->_path.'views/js/jquery.mask.min.js');
+            $this->context->controller->addJS($this->_path.'views/js/front.js');
         }
     }
 
@@ -231,9 +237,10 @@ class Psmodendereco extends Module
         }
     }
 
-    public function hookActionValidateCustomerAddressForm()
+    public function hookActionValidateCustomerAddressForm($params)
     {
-        /* Place your code here. */
+        $formatedPhone = preg_replace("/[^0-9]/", "", $params['form']->getField("phone")->getValue());
+        $params['form']->getField("phone")->setValue($formatedPhone);
     }
 
     public function getEndereco($postcode)
@@ -242,7 +249,8 @@ class Psmodendereco extends Module
         if (!preg_match('/^[0-9]{8}?$/', $this->modPostcode)) {
             throw new Exception('Cep inválido');
         }
-        $this->wsViaCep();
+        //$this->wsViaCep();
+        $this->wsCorreios();
         $this->getIdState();
         return $this->modDataAddress;
     }
@@ -258,6 +266,23 @@ class Psmodendereco extends Module
         $results_string = curl_exec($ch);
         curl_close($ch);
         $this->modDataAddress = json_decode($results_string, true);
+    }
+
+    private function wsCorreios()
+    {
+        $url = 'https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente?wsdl';
+        $options = [
+            'soap_version'   => SOAP_1_1,
+            'trace' => true
+        ];
+        $client = new SoapClient($url, $options);
+        $result = $client->consultaCEP(['cep'=>$this->modPostcode]);
+        $this->modDataAddress = [
+            'logradouro' => $result->return->end,
+            'bairro' => $result->return->bairro,
+            'localidade' => $result->return->cidade,
+            'uf' => $result->return->uf
+        ];
     }
 
     private function getIdState()

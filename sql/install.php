@@ -24,25 +24,10 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-// Setar esse formato ao instalar o módulo
-// ps_address_format
-// id_contry=58
-
-// firstname lastname
-// company
-// postcode
-// address1
-// vat_number
-// address2
-// other
-// city
-// State:name
-// phone
-
 $sql = array();
 $db_prefix = _DB_PREFIX_;
 $db_engine = _MYSQL_ENGINE_;
-$format = 'firstname lastname\ncompany\npostcode\naddress1\nvat_number\naddress2\nother\ncity\nState:name\nphone';
+$format = 'firstname lastname\nCountry:name\npostcode\naddress1\nvat_number\naddress2\nother\ncity\nState:name\nphone';
 $sql[] = "UPDATE `{$db_prefix}address_format` SET `format`='{$format}' WHERE `id_country`=58";
 
 foreach ($sql as $query) {

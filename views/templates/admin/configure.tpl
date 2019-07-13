@@ -35,14 +35,3 @@
 		{l s='This module will boost your sales!' mod='psmodendereco'}
 	</p>
 </div>
-
-<div class="panel">
-	<h3><i class="icon icon-tags"></i> {l s='Documentation' mod='psmodendereco'}</h3>
-	<p>
-		&raquo; {l s='You can get a PDF documentation to configure this module' mod='psmodendereco'} :
-		<ul>
-			<li><a href="#" target="_blank">{l s='English' mod='psmodendereco'}</a></li>
-			<li><a href="#" target="_blank">{l s='French' mod='psmodendereco'}</a></li>
-		</ul>
-	</p>
-</div>
