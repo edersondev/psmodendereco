@@ -26,12 +26,18 @@
 <div class="panel">
 	<h3><i class="icon icon-credit-card"></i> {l s='Endereço por Cep' mod='psmodendereco'}</h3>
 	<p>
-		<strong>{l s='Here is my new generic module!' mod='psmodendereco'}</strong><br />
-		{l s='Thanks to PrestaShop, now I have a great module.' mod='psmodendereco'}<br />
-		{l s='I can configure it using the following configuration form.' mod='psmodendereco'}
+		<strong>{l s='Módulo para completar o endereço pelo CEP' mod='psmodendereco'}</strong><br />
+		{l s='O módulo possui dois Webservices para a busca do endereço e cada um precisa de um módulo do php instalado no servidor.' mod='psmodendereco'}<br />
+		{l s='Para usar o webservice do ViaCep precisa do módulo Curl do php.' mod='psmodendereco'}<br />
+		{l s='Para usar o webservice dos Correios precisa do módulo Soap do php.' mod='psmodendereco'}
 	</p>
 	<br />
 	<p>
-		{l s='This module will boost your sales!' mod='psmodendereco'}
+		{l s='O formulário de endereço do cliente é configurado no seguinte caminho:' mod='psmodendereco'}
+	</p>
+	<p>
+		<a href="index.php?controller=AdminCountries&id_country=58&updatecountry&token={$token}" title="Configuração do formulário de endereços">
+			Menu International >> Localizações na aba Países.
+		</a>
 	</p>
 </div>

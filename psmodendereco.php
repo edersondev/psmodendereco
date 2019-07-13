@@ -56,6 +56,13 @@ class Psmodendereco extends Module
         $this->confirmUninstall = $this->l('Tem certeza de que deseja desinstalar este módulo');
 
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+
+        if (Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'viacep' && !extension_loaded('curl')) {
+            $this->warning = $this->trans('Para usar o WebService do ViaCep o servidor precisar ter a extensão php-curl instalado.');
+        }
+        if (Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'wscorreios' && !extension_loaded('soap')) {
+            $this->warning = $this->trans('Para usar o Webservice dos Correios o servidor precisa ter a extensão php-soap instalado.');
+        }
     }
 
     /**
@@ -64,7 +71,7 @@ class Psmodendereco extends Module
      */
     public function install()
     {
-        Configuration::updateValue('PSMODENDERECO_LIVE_MODE', false);
+        Configuration::updateValue('PSMODENDERECO_WEB_SERVICE', 'viacep');
 
         include(dirname(__FILE__).'/sql/install.php');
 
@@ -76,7 +83,7 @@ class Psmodendereco extends Module
 
     public function uninstall()
     {
-        Configuration::deleteByName('PSMODENDERECO_LIVE_MODE');
+        Configuration::deleteByName('PSMODENDERECO_WEB_SERVICE');
 
         return parent::uninstall();
     }
@@ -94,6 +101,7 @@ class Psmodendereco extends Module
         }
 
         $this->context->smarty->assign('module_dir', $this->_path);
+        $this->context->smarty->assign('token', Tools::getAdminTokenLite('AdminCountries'));
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
@@ -141,25 +149,6 @@ class Psmodendereco extends Module
                 ),
                 'input' => array(
                     array(
-                        'type' => 'switch',
-                        'label' => $this->l('Live mode'),
-                        'name' => 'PSMODENDERECO_LIVE_MODE',
-                        'is_bool' => true,
-                        'desc' => $this->l('Use this module in live mode'),
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
-                        ),
-                    ),
-                    array(
                         'type' => 'radio',
                         'label' => $this->l('WebService para buscar o endereço'),
                         'name' => 'PSMODENDERECO_WEB_SERVICE',
@@ -193,7 +182,6 @@ class Psmodendereco extends Module
     protected function getConfigFormValues()
     {
         return array(
-            'PSMODENDERECO_LIVE_MODE' => Configuration::get('PSMODENDERECO_LIVE_MODE', true),
             'PSMODENDERECO_WEB_SERVICE' => Configuration::get('PSMODENDERECO_WEB_SERVICE','viacep')
         );
     }
@@ -249,8 +237,15 @@ class Psmodendereco extends Module
         if (!preg_match('/^[0-9]{8}?$/', $this->modPostcode)) {
             throw new Exception('Cep inválido');
         }
-        //$this->wsViaCep();
-        $this->wsCorreios();
+        if(!is_null($this->warning)) {
+            throw new Exception('Módulo de busca com pendência de configuração');
+        }
+        if(Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'viacep'){
+            $this->wsViaCep();
+        }
+        if(Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'viacep'){
+            $this->wsCorreios();
+        }
         $this->getIdState();
         return $this->modDataAddress;
     }
