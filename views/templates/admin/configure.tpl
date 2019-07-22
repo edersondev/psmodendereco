@@ -23,6 +23,17 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
+{if !is_null($warnings)}
+<div class="alert alert-warning">
+	<p><strong>Pendencia de módulo php no servidor.</strong></p>
+	<ul>
+		{foreach from=$warnings item=warning}
+			<li>{$warning}</li>
+		{/foreach}
+	</ul>
+</div>
+{/if}
+
 <div class="panel">
 	<h3><i class="icon icon-credit-card"></i> {l s='Endereço por Cep' mod='psmodendereco'}</h3>
 	<p>

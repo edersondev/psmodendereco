@@ -39,7 +39,7 @@ class Psmodendereco extends Module
     {
         $this->name = 'psmodendereco';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Ederson Ferreira da Silva';
         $this->need_instance = 0;
 
@@ -102,6 +102,7 @@ class Psmodendereco extends Module
 
         $this->context->smarty->assign('module_dir', $this->_path);
         $this->context->smarty->assign('token', Tools::getAdminTokenLite('AdminCountries'));
+        $this->context->smarty->assign('warnings',$this->warning);
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
@@ -243,7 +244,7 @@ class Psmodendereco extends Module
         if(Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'viacep'){
             $this->wsViaCep();
         }
-        if(Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'viacep'){
+        if(Configuration::get('PSMODENDERECO_WEB_SERVICE') == 'wscorreios'){
             $this->wsCorreios();
         }
         $this->getIdState();
