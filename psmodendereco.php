@@ -212,7 +212,8 @@ class Psmodendereco extends Module
 
     public function hookActionFrontControllerSetMedia($params)
     {
-        if($this->context->controller->php_self == 'address') {
+        //if($this->context->controller->php_self == 'address') {
+        if (Tools::getValue('controller') == 'order' || Tools::getValue('controller') == 'identity' || (Tools::getValue('controller') == 'authentication' && Tools::getValue('create_account') == '1')){
             $this->context->controller->registerJavascript(
                 'module-psmodendereco-jquerymask',
                 'modules/'.$this->name.'/views/js/jquery.mask.min.js',
