@@ -212,7 +212,7 @@ class Psmodendereco extends Module
 
     public function hookActionFrontControllerSetMedia($params)
     {
-        if($this->context->controller->php_self == 'address') {
+        if (Tools::getValue('controller') == 'address' || Tools::getValue('controller') == 'order'){
             $this->context->controller->registerJavascript(
                 'module-psmodendereco-jquerymask',
                 'modules/'.$this->name.'/views/js/jquery.mask.min.js',
@@ -286,7 +286,7 @@ class Psmodendereco extends Module
         $db_prefix = _DB_PREFIX_;
         $db = Db::getInstance();
         $isoCode = $this->modDataAddress['uf'];
-        $sql = "SELECT id_state FROM `{$db_prefix}state` WHERE `iso_code` = '{$isoCode}'";
+        $sql = "SELECT id_state FROM `{$db_prefix}state` WHERE `iso_code` = '{$isoCode}' AND `id_country` = (SELECT id_country FROM `{$db_prefix}country` WHERE `iso_code` = 'br')";
         $result = $db->getRow($sql);
         $this->modDataAddress['id_state'] = $result['id_state'];
     }
